@@ -52,6 +52,9 @@ func main() {
 		        fmt.Println(err)
             }
 	        continue
+        case "help":
+            gamelogic.PrintServerHelp()
+            continue
         case "quit":
             break REPL
         default:
