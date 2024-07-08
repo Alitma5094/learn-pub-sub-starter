@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
 
+	"github.com/bootdotdev/learn-pub-sub-starter/internal/gamelogic"
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/pubsub"
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/routing"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -30,15 +29,35 @@ func main() {
 		return
 	}
 
-	err = pubsub.PublishJSON(channel, routing.ExchangePerilDirect, routing.PauseKey, routing.PlayingState{IsPaused: true})
-	if err != nil {
-		fmt.Println(err)
-	}
 
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt)
-	<-signalChan
+    gamelogic.PrintServerHelp()
+
+    REPL:
+    for {
+        input := gamelogic.GetInput()
+        if input == nil {
+            continue
+        }
+        
+        switch input[0] {
+        case "pause":
+	        err = pubsub.PublishJSON(channel, routing.ExchangePerilDirect, routing.PauseKey, routing.PlayingState{IsPaused: true})
+	        if err != nil {
+		        fmt.Println(err)
+            }
+            continue
+        case "resume":
+	        err = pubsub.PublishJSON(channel, routing.ExchangePerilDirect, routing.PauseKey, routing.PlayingState{IsPaused: false})
+	        if err != nil {
+		        fmt.Println(err)
+            }
+	        continue
+        case "quit":
+            break REPL
+        default:
+            fmt.Println("Invalid command")
+        }
+    }
 
 	fmt.Println("Exiting...")
-
 }
