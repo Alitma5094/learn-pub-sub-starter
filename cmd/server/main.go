@@ -23,7 +23,7 @@ func main() {
 
 	fmt.Println("Successful connected to RabbitMQ server")
 
-	channel, err := connection.Channel()
+	channel, _, err := pubsub.DeclareAndBind(connection, routing.ExchangePerilTopic, routing.GameLogSlug, fmt.Sprint(routing.GameLogSlug, ".*"), int(amqp.Persistent))
 	if err != nil {
 		fmt.Printf("Channel: %s\n", err)
 		return
