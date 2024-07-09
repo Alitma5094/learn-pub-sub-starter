@@ -40,7 +40,13 @@ func main() {
         fmt.Println(err)
     }
     
-	err = pubsub.SubscribeJSON(connection, routing.ExchangePerilTopic, fmt.Sprint(routing.ArmyMovesPrefix, ".", username), fmt.Sprint(routing.ArmyMovesPrefix, ".*"), int(amqp.Persistent), handlerMove(state))
+    err = pubsub.SubscribeJSON(connection, routing.ExchangePerilTopic, fmt.Sprint(routing.ArmyMovesPrefix, ".", username), fmt.Sprint(routing.ArmyMovesPrefix, ".*"), int(amqp.Transient), handlerMove(state, channel))
+    if err != nil {
+        fmt.Println(err)
+    }
+
+    
+    err = pubsub.SubscribeJSON(connection, routing.ExchangePerilTopic, routing.WarRecognitionsPrefix, fmt.Sprint(routing.WarRecognitionsPrefix, ".*"), int(amqp.Persistent), handlerWar(state))
     if err != nil {
         fmt.Println(err)
     }

@@ -8,7 +8,7 @@ func DeclareAndBind(conn *amqp.Connection, exchange, queueName, key string, simp
         return nil, amqp.Queue{}, err
     }
     
-    queue, err := channel.QueueDeclare(queueName, simpleQueueType == int(amqp.Persistent), simpleQueueType == int(amqp.Transient), simpleQueueType == int(amqp.Transient), false, nil)
+    queue, err := channel.QueueDeclare(queueName, simpleQueueType == int(amqp.Persistent), simpleQueueType == int(amqp.Transient), simpleQueueType == int(amqp.Transient), false, amqp.Table{"x-dead-letter-exchange": "peril_dlx"})
     if err != nil {
         return nil, amqp.Queue{}, err
     }
